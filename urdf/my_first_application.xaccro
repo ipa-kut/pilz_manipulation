@@ -2,6 +2,9 @@
 
 <robot name="prbt" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+  <!-- Using pi and defining alpha: the orientation of the prbt_accroche-->
+  <xacro:property name="alpha" value="${90/180*pi}" />
+
   <!-- macro definition of pilz lwa -->
   <xacro:include filename="$(find prbt_support)/urdf/prbt_macro.xacro" />
 
@@ -13,6 +16,11 @@
   <!-- coloring from the table -->
   <material name="grey">
     <color rgba="0.75 0.75 0.75 1"/>
+  </material>
+
+  <!-- coloring the added part to the robot -->
+  <material name="blue">
+    <color rgba="0 0 0.8 2"/>
   </material>
 
   <!-- instantiate the robot -->
@@ -28,12 +36,12 @@
     </visual>
   </link>
 
+<!--change the meshes afterwards -->
   <link name="button1">
     <visual>
-      <origin rpy="1.5708 0 0" xyz="0 -0.5 0"/>
+      <origin rpy="1.5708 0 0" xyz="0.1 -0.5 0"/>
       <geometry>
-	<!--change the mesh into a button mesh-->
-        <mesh filename="package://pilz_tutorial/urdf/meshes/PNOZ.stl"
+        <mesh filename="package://pilz_manipulation/urdf/meshes/PNOZ.stl"
           scale="0.001 0.001 0.001"/>
        </geometry>
       <material name="yellow"/>
@@ -42,10 +50,9 @@
 
   <link name="button2">
     <visual>
-      <origin rpy="1.5708 0 0" xyz="0 0.5 0"/>
+      <origin rpy="1.5708 0 0" xyz="-0.1 -0.5 0"/>
       <geometry>
-	<!--change the mesh into a button mesh-->
-        <mesh filename="package://pilz_tutorial/urdf/meshes/PNOZ.stl"
+        <mesh filename="package://pilz_manipulation/urdf/meshes/PNOZ.stl"
           scale="0.001 0.001 0.001"/>
        </geometry>
       <material name="yellow"/>
@@ -55,19 +62,39 @@
 <!--add end effector tcp-->
 <link name="prbt_tcp"/>
 
+<!-- add the "accroche" + scanner to have the scanner box on it -->
+  <link name="prbt_accroche">
+    <visual>
+      <origin rpy="0 0 ${alpha}" xyz="0 0 0"/>
+      <geometry>
+       <box size="0.05 0.175 0.05"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+  </link> 
+
+
+
+
 <!-- connect the added tcp and the flange with a joint -->
   <joint name="prbt_fixed_joint_tcp" type="fixed">
-   <origin rpy="0 0 0" xyz="0 0 0.05"/>
+   <origin rpy="0 0 0" xyz="0 0 0"/>
     <parent link="prbt_flange"/>
     <child link="prbt_tcp"/>
   </joint>
+
+<!-- connect the added "accroche" + scanner and the flange with a joint -->
+  <joint name="prbt_fixed_joint_accroch" type="fixed">
+   <origin rpy="0 0 0" xyz="0 0.12 -0.05"/>
+    <parent link="prbt_link_5"/>
+    <child link="prbt_accroche"/>
+  </joint> 
 
   <joint name="table_joint" type="fixed">
     <parent link="table"/>
     <child link="prbt_base_link"/>
   </joint>
-
-  <joint name="button1_joint" type="fixed">
+<joint name="button1_joint" type="fixed">
     <parent link="table"/>
     <child link="button1"/>
   </joint>

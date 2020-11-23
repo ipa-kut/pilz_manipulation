@@ -5,12 +5,13 @@
 	
 	<!--send to param server -->
 	<param name="robot_description"
-	  command="$(find xacro)/xacro '$(find pilz_tutorial)/urdf/my_first_application.xaccro'"/>
+	  command="$(find xacro)/xacro '$(find pilz_manipulation)/urdf/my_first_application.xaccro'"/>
 
 
 	<include file="$(find prbt_moveit_config)/launch/moveit_planning_execution.launch">
 	  <arg name="load_robot_description" value="false"/>
 	  <arg name="sim" value="$(arg sim)"/>
+<!-- We are not using the pilz_command planner yet -->
           <arg name="pipeline" value="pilz_command_planner"/>
 	</include>
 
