@@ -38,6 +38,8 @@ class Thread_BtnPosition(threading.Thread):
         self.bool_position_Btn1_sendMsg = True
         self.bool_position_Btn2 = False
         self.bool_position_Btn2_sendMsg = True
+        self.msg_touched = "touched"
+        self.msg_untouched = "untouched"
 
         
 #    def run(self):
@@ -49,15 +51,19 @@ class Thread_BtnPosition(threading.Thread):
     def run(self):
         while 1:
             if self.bool_position_Btn1 == self.bool_position_Btn1_sendMsg == True:
+                self.connection.send(self.name_Btn1+self.msg_touched)
                 print("send the socket message that the arm is in the" + self.name_Btn1 +" area")
                 self.bool_position_Btn1_sendMsg = False
             if self.bool_position_Btn1 == self.bool_position_Btn1_sendMsg == False:
+                self.connection.send(self.name_Btn1+self.msg_untouched)
                 print("send the socket message that the arm has LEFT THE "+ self.name_Btn1 + "AREA")
                 self.bool_position_Btn1_sendMsg = True
             if self.bool_position_Btn2 == self.bool_position_Btn2_sendMsg == True:
+                self.connection.send(self.name_Btn2+self.msg_touched)
                 print("send the socket message that the arm is in the" + self.name_Btn2 +" area")
                 self.bool_position_Btn2_sendMsg = False
             if self.bool_position_Btn2 == self.bool_position_Btn2_sendMsg == False:
+                self.connection.send(self.name_Btn2+self.msg_untouched)
                 print("send the socket message that the arm has LEFT THE "+ self.name_Btn2 + "AREA")
                 self.bool_position_Btn2_sendMsg = True
     
