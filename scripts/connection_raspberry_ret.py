@@ -44,14 +44,14 @@ if __name__ == '__main__':
 #        z2 = 0.2 
         ''' To use with the endurance_demo launch'''
         x1 = -0.1
-        y1 = -0.4
-        z1 = 0.312 -0.03 # -0.03 is the argument we gave to the pick and place to deal with
-        x2 = 0.1
-        y2 = -0.4
-        z2 = 0.312 -0.03 
+        y1 = -0.5
+        z1 = 0.322 -0.03 # -0.03 is the argument we gave to the pick and place to deal with
+        x2 = 0.05
+        y2 = -0.5
+        z2 = 0.322 -0.03 
         print("lancement")
         host = '10.0.1.12'
-        port = 50000
+        port = 5000
             #Establishment of the connection :
         connexion = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:

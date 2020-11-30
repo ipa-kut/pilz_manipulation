@@ -44,7 +44,6 @@ def callback(msg,th_E):
 
 
 def run(th_E):
-    print("COCOCOCOCOC")
     # node initialization
     rospy.init_node("tool_pose_publisher_use")
     # definition of publisher/subscriber and services
