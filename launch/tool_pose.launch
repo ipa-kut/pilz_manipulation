@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+
+ <node name="connection_raspberry_ret" pkg ="pilz_manipulation" type="connection_raspberry_ret.py" output="screen"/>
+
+ <node name="tool_pose_publisher" pkg ="ur_manipulation" type="tool_pose_publisher.py" output="screen"/>
+</launch>

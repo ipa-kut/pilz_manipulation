@@ -1,15 +1,17 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Sat Nov 21 20:45:48 2020
+Created on Mon Nov 30 14:18:05 2020
 
-@author: mathieu
+@author: ret
 """
+
 
 from geometry_msgs.msg import Pose, Point
 from pilz_robot_programming import *
 import math
 import rospy
+import datetime
 
 __REQUIRED_API_VERSION__ = "1" # API version
 __ROBOT_VELOCITY__ = 0.5 #velocity of the robot
@@ -36,23 +38,33 @@ def start_program():
     while(True):
         # do infinite loop
         # pick the PNOZ
+        get_all_info()
         rospy.loginfo("Move to pick position") # log
         r.move(Ptp(goal=pick_pose, vel_scale = __ROBOT_VELOCITY__, relative=False))
+        get_all_info()
         rospy.loginfo("Pick movement") # log
         pick_and_place()
 
         # place the PNOZ
+        get_all_info()
         rospy.loginfo("Move to place position") # log
         r.move(Ptp(goal=place_pose, vel_scale = __ROBOT_VELOCITY__, relative=False))
+        get_all_info()
         rospy.loginfo("Place movement") # log
         pick_and_place()
     
+def get_all_info():
+    print("time =" ,datetime.datetime.utcnow()) # print time
+    print("joint_states = ",r.get_current_joint_states()) # joint_states
+    print("end_effector pose = ",r.get_current_pose()) # position of end effector
 
 def pick_and_place():    
     r.move(Lin(goal=Pose(position=Point(0, 0, 0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
+    get_all_info()
     rospy.loginfo("Open/Close the gripper") # log
     rospy.sleep(0.2)    # pick or Place the PNOZ (close or open the gripper)
     r.move(Lin(goal=Pose(position=Point(0, 0, -0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
+    get_all_info()
     
     
 if __name__ == "__main__":

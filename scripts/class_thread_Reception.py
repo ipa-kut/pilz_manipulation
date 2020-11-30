@@ -22,7 +22,7 @@ class ThreadReception(threading.Thread):
             message_recu = self.connexion.recv(1024)
             self.data.append([message_recu])
             print "*" + message_recu + "*"
-            print self.data 
+            #print self.data 
             if message_recu =='' or message_recu.upper() == "FIN":
                 self._Thread__stop()
                 print('the thread is stopped')
