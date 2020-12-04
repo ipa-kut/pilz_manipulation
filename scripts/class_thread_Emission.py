@@ -12,26 +12,29 @@ import tf
 import geometry_msgs.msg
 from geometry_msgs.msg import PoseStamped
 import datetime
+import time_relativ_use
+import write_influxdb
+import write_csv
 
 
 
 ''' Define the Class BtnPosition to work faster'''
 class Thread_BtnPosition(threading.Thread):
-    def __init__(self,conn,name_Btn1,name_Btn2,x1,y1,z1,x2,y2,z2):
+    def __init__(self,conn,name_Btn1,name_Btn2,x1,y1,z1,x2,y2,z2,client_db,name_file):
         threading.Thread.__init__(self)
         self.connection = conn
         self.name_Btn1 = name_Btn1
         self.name_Btn2 = name_Btn2
-        self.x1_inf= x1-0.05
-        self.x1_sup= x1+0.05
-        self.y1_inf= y1-0.05 ## I do not know why I have a deviation in the trajectoy for the y coordonate
-        self.y1_sup= y1+0.05
+        self.x1_inf= x1-0.08
+        self.x1_sup= x1+0.08
+        self.y1_inf= y1-0.08 ## I do not know why I have a deviation in the trajectoy for the y coordonate
+        self.y1_sup= y1+0.08
         self.z1_inf= z1-0.05
         self.z1_sup= z1+0.05
-        self.x2_inf= x2-0.05
-        self.x2_sup= x2+0.05
-        self.y2_inf= y2-0.05 ## I do not know why I have a deviation in the trajectoy for the y coordonate
-        self.y2_sup= y2+0.05
+        self.x2_inf= x2-0.08
+        self.x2_sup= x2+0.08
+        self.y2_inf= y2-0.08 ## I do not know why I have a deviation in the trajectoy for the y coordonate
+        self.y2_sup= y2+0.08
         self.z2_inf= z2-0.05
         self.z2_sup= z2+0.05
         self.bool_position_Btn1 = False
@@ -40,32 +43,56 @@ class Thread_BtnPosition(threading.Thread):
         self.bool_position_Btn2_sendMsg = True
         self.msg_touched = "touched"
         self.msg_untouched = "untouched"
+        self.client_db = client_db
+        self.name_file = name_file
 
         
-#    def run(self):
-#        while 1:
-#            if self.msg_jointState_bool_send == True:
-#                self.connection.send(self.msg_jointState_complete)
-#                self.msg_jointState_bool_send = False
 
     def run(self):
         while 1:
             if self.bool_position_Btn1 == self.bool_position_Btn1_sendMsg == True:
+                time_relativ_use.time_t1 = datetime.datetime.utcnow() # defining the relativ time t1
                 self.connection.send(str(datetime.datetime.utcnow())+";"+self.name_Btn1+";"+self.msg_touched)
                 print("send the socket message that the arm is in the" + self.name_Btn1 +" area")
                 self.bool_position_Btn1_sendMsg = False
             if self.bool_position_Btn1 == self.bool_position_Btn1_sendMsg == False:
+                time_relativ_use.time_t2 = datetime.datetime.utcnow()
                 self.connection.send(str(datetime.datetime.utcnow())+";"+self.name_Btn1+";"+self.msg_untouched)
                 print("send the socket message that the arm has LEFT THE "+ self.name_Btn1 + "AREA")
                 self.bool_position_Btn1_sendMsg = True
+                if time_relativ_use.compare_time() == True:
+                    json_all_info = write_influxdb.json_body_define_allInfo(write_influxdb.list_msg)
+                    self.client_db.write_points(json_all_info)
+                    write_csv.write_into_csv(self.name_file,write_influxdb.list_msg)
+                    print("writing is done")
+                else:
+                    try:
+                        print (write_influxdb.list_error)
+                        json_error_info = write_influxdb.json_body_define_errorInfo(write_influxdb.list_error)
+                        self.client_db.write_points(json_error_info)
+                    except:
+                        pass
             if self.bool_position_Btn2 == self.bool_position_Btn2_sendMsg == True:
+                time_relativ_use.time_t1 = datetime.datetime.utcnow()
                 self.connection.send(str(datetime.datetime.utcnow())+";"+self.name_Btn2+";"+self.msg_touched)
                 print("send the socket message that the arm is in the" + self.name_Btn2 +" area")
                 self.bool_position_Btn2_sendMsg = False
             if self.bool_position_Btn2 == self.bool_position_Btn2_sendMsg == False:
+                time_relativ_use.time_t2 = datetime.datetime.utcnow()
                 self.connection.send(str(datetime.datetime.utcnow())+";"+self.name_Btn2+";"+self.msg_untouched)
                 print("send the socket message that the arm has LEFT THE "+ self.name_Btn2 + "AREA")
                 self.bool_position_Btn2_sendMsg = True
+                if time_relativ_use.compare_time() == True:              
+                    json_all_info = write_influxdb.json_body_define_allInfo(write_influxdb.list_msg)
+                    self.client_db.write_points(json_all_info)
+                    write_csv.write_into_csv(self.name_file,write_influxdb.list_msg)
+                else: ## there is an error and we log this information as an error in the database
+                    try:
+                        print (write_influxdb.list_error)
+                        json_error_info = write_influxdb.json_body_define_errorInfo(write_influxdb.list_error)
+                        self.client_db.write_points(json_error_info)
+                    except:
+                        pass
     
 
         
