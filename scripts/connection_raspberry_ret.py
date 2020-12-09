@@ -20,6 +20,7 @@ import write_csv
 def run(connexion,client_db,writer):
 
     try:
+        #starting the thread
         th_E = class_thread_Emission.Thread_BtnPosition(connexion,"Btn1","Btn2",x1,y1,z1,x2,y2,z2,client_db,name_file)
         th_R = class_thread_Reception.ThreadReception(connexion)
         th_E.start()
@@ -27,32 +28,23 @@ def run(connexion,client_db,writer):
     except KeyboardInterrupt :
         th_E._Thread__stop()
         th_R._Thread__stop()
-        print("done")
-    tool_pose_listener_socket_message.run(th_E)
+        print("done") # in order to know that we have well shutdown the thread when we end the test
+    tool_pose_listener_socket_message.run(th_E) ## this is the node hearing the tool_pose_position and telling the th_Emission to send the msg to the Rpi
     
 
 if __name__ == '__main__':
     try:
-        '''global variable I want to use '''
-        # These are the cartesian position of the Btn
-        #For now I use the position where the end effector should go
-        ''' To use with the python script '''
-#        x1 = -0.1
-#        y1 = -0.5
-#        z1 = 0.2
-#        x2 = 0.1
-#        y2 = -0.5
-#        z2 = 0.2 
+        # I use the position of the end effector 
         ''' To use with the endurance_demo launch'''
         x1 = -0.1
         y1 = -0.5
-        z1 = 0.3195 -0.03 # -0.03 is the argument we gave to the pick and place to deal with
+        z1 = 0.319 -0.03 # -0.03 is the argument we gave to the pick and place to deal with
         x2 = 0.05
         y2 = -0.5
-        z2 = 0.3195 -0.03 
+        z2 = 0.319 -0.03 
         print("lancement")
         host = '10.4.11.117'
-        port = 5010
+        port = 5007
             #Establishment of the connection :
         connexion = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:

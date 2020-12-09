@@ -25,8 +25,9 @@ class Thread_BtnPosition(threading.Thread):
         self.connection = conn
         self.name_Btn1 = name_Btn1
         self.name_Btn2 = name_Btn2
+        ## Setting the area we want to detect the Robot is around the Btn
         self.x1_inf= x1-0.08
-        self.x1_sup= x1+0.08
+        self.x1_sup= x1+0.08 ## for now this is too much I guess
         self.y1_inf= y1-0.08 ## I do not know why I have a deviation in the trajectoy for the y coordonate
         self.y1_sup= y1+0.08
         self.z1_inf= z1-0.05
@@ -53,25 +54,27 @@ class Thread_BtnPosition(threading.Thread):
             if self.bool_position_Btn1 == self.bool_position_Btn1_sendMsg == True:
                 time_relativ_use.time_t1 = datetime.datetime.utcnow() # defining the relativ time t1
                 self.connection.send(str(datetime.datetime.utcnow())+";"+self.name_Btn1+";"+self.msg_touched)
-                print("send the socket message that the arm is in the" + self.name_Btn1 +" area")
-                self.bool_position_Btn1_sendMsg = False
+                print("send the socket message that the arm is in the" + self.name_Btn1 +" area")               # to see on the screen the BtnPressing between the entering and going out of the BtnArea
+                self.bool_position_Btn1_sendMsg = False                                                         # send the msg only once
             if self.bool_position_Btn1 == self.bool_position_Btn1_sendMsg == False:
                 time_relativ_use.time_t2 = datetime.datetime.utcnow()
                 self.connection.send(str(datetime.datetime.utcnow())+";"+self.name_Btn1+";"+self.msg_untouched)
                 print("send the socket message that the arm has LEFT THE "+ self.name_Btn1 + "AREA")
                 self.bool_position_Btn1_sendMsg = True
-                if time_relativ_use.compare_time() == True:
+                if time_relativ_use.compare_time() == True:                                                     ## if the Btn is pressed during the interval of time we are in the area of the Btn
                     json_all_info = write_influxdb.json_body_define_allInfo(write_influxdb.list_msg)
                     self.client_db.write_points(json_all_info)
                     write_csv.write_into_csv(self.name_file,write_influxdb.list_msg)
                     print("writing is done")
-                else:
+                else: ## there is an error and we log this information as an error in the database
                     try:
                         print (write_influxdb.list_error)
-                        json_error_info = write_influxdb.json_body_define_errorInfo(write_influxdb.list_error)
+                        json_error_info = write_influxdb.json_body_define_errorInfo(write_influxdb.list_error) ## we can defining there the type of error we want to deal with / add different type
                         self.client_db.write_points(json_error_info)
                     except:
                         pass
+            ## same thing is done for the Btn2
+            # I can change this into two threads each one dealing with one button / because good processing power on the computer (that was an issue on the Rpi, but should not be here)
             if self.bool_position_Btn2 == self.bool_position_Btn2_sendMsg == True:
                 time_relativ_use.time_t1 = datetime.datetime.utcnow()
                 self.connection.send(str(datetime.datetime.utcnow())+";"+self.name_Btn2+";"+self.msg_touched)
@@ -86,7 +89,7 @@ class Thread_BtnPosition(threading.Thread):
                     json_all_info = write_influxdb.json_body_define_allInfo(write_influxdb.list_msg)
                     self.client_db.write_points(json_all_info)
                     write_csv.write_into_csv(self.name_file,write_influxdb.list_msg)
-                else: ## there is an error and we log this information as an error in the database
+                else: 
                     try:
                         print (write_influxdb.list_error)
                         json_error_info = write_influxdb.json_body_define_errorInfo(write_influxdb.list_error)

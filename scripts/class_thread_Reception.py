@@ -28,9 +28,9 @@ class ThreadReception(threading.Thread):
             print "*" + message_recu + "*"
             try:
                 write_influxdb.list_msg = message_recu.split(";")
-                time_relativ_use.time_t1_plus_delta_t = datetime.datetime.strptime(write_influxdb.list_msg[0], '%Y-%m-%d %H:%M:%S.%f')
+                time_relativ_use.time_t1_plus_delta_t = datetime.datetime.strptime(write_influxdb.list_msg[0], '%Y-%m-%d %H:%M:%S.%f') # logging this value in time_relativ_use to use it everywhere / add futures
                 if write_influxdb.list_msg[1] == "Btn1" : ## checking the name of the Btn
-                    write_influxdb.list_msg  = [write_influxdb.list_msg[0],True,False,True,False]
+                    write_influxdb.list_msg  = [write_influxdb.list_msg[0],True,False,True,False] # setting the information we want to write in influxdb
                     write_influxdb.list_error= [write_influxdb.list_msg[0],True,False,True]
                 if write_influxdb.list_msg[1] == "Btn2" : 
                     write_influxdb.list_msg  = [write_influxdb.list_msg[0],False,True,False,True]
