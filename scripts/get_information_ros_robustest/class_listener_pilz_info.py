@@ -32,11 +32,9 @@ class PilzInformer(InfluxDBClient):
         self.actual_joint_state= diagnostics.actual.positions
         self.encoded_state=diagnostics.desired.positions
         self.error_state=diagnostics.error.positions
-        self.print_all_info()
-        print "AAAAAaa"
         self.write_into_db(self.client)
         self.data = self.convert_info_into_json(self.client)
-        print "Ecriture Data"
+        self.print_all_info()
 
     
     def print_all_info(self):
@@ -82,10 +80,5 @@ def write_info_influxdb(client,data):
 
 if __name__ == '__main__':
     rospy.init_node("joint_trajectory_subscriber", anonymous=True)
-#    influxdb_client= write_into_db()
     myInformer = PilzInformer()
-#    try:
-#        influxdb_client.write_points(myInformer.data)
-#    except:
-#        print("We are still beginning")
     rospy.spin()
