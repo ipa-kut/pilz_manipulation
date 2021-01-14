@@ -16,40 +16,22 @@ import write_csv
 
 
 
-
-def run(connexion,client_db,writer):
-
-    try:
-        #starting the thread
-        th_E = class_thread_Emission.Thread_BtnPosition(connexion,"Btn1","Btn2",x1,y1,z1,x2,y2,z2,client_db,name_file)
-        th_R = class_thread_Reception.ThreadReception(connexion)
-        th_E.start()
-        th_R.start()
-    except KeyboardInterrupt :
-        th_E._Thread__stop()
-        th_R._Thread__stop()
-        print("done") # in order to know that we have well shutdown the thread when we end the test
-    tool_pose_listener_socket_message.run(th_E) ## this is the node hearing the tool_pose_position and telling the th_Emission to send the msg to the Rpi
+def main(x1,y1,z1,x2,y2,z2,host,port):
+    """! Main program entry."""
+    """! Maps a number from one range to another.
+    @param x1 @param y1 @param z1   The input number for the position of the target pose 1
+    @param x2 @param y2 @param z2   The input number for the position of the target pose 2
+    @param host @param port   The input number for the socket connection
+    @nparam ame_file    The name of the csv file we are logging the information in
+    @param client_db    The influx db we are using
     
-''' Add this part and use it when the ret is not running
-I am afraid that this thread that I setup as daemon could be mutex by the other thread, and get bad information'''
-def get_information_pilz(pilz_object_class_pilz_info,client_db, writer):
-    pass
-''' '''
-
-if __name__ == '__main__':
+    @return Set the socket communication and launch the commucation between the Button Masher Application and the Test
+    """
     try:
         # I use the position of the end effector 
         ''' To use with the endurance_demo launch'''
-        x1 = -0.1
-        y1 = -0.5
-        z1 = 0.319 -0.03 # -0.03 is the argument we gave to the pick and place to deal with
-        x2 = 0.05
-        y2 = -0.5
-        z2 = 0.319 -0.03 
         print("lancement")
-        host = '10.4.11.117'
-        port = 5003
+
             #Establishment of the connection :
         connexion = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
@@ -58,10 +40,34 @@ if __name__ == '__main__':
             print "Connection has failed."
             sys.exit()    
         print "Connection established with the servor."
-        name_file = write_csv.create_csv_file(write_csv.header, write_csv.name_file)
-        client_db = write_influxdb.write_into_db()
-        run(connexion,client_db,name_file) # Define in which way and where we want to log the data 
+
+#        run(connexion,client_db,name_file) # Define in which way and where we want to log the data 
+#            """! Main program entry."""
+        try:
+            #starting the thread
+            th_E = class_thread_Emission.Thread_BtnPosition(connexion,"Btn1","Btn2",x1,y1,z1,x2,y2,z2,client_db,name_file)
+            th_R = class_thread_Reception.ThreadReception(connexion)
+            th_E.start()
+            th_R.start()
+        except KeyboardInterrupt :
+            th_E._Thread__stop()
+            th_R._Thread__stop()
+            print("done") # in order to know that we have well shutdown the thread when we end the test
+        tool_pose_listener_socket_message.run(th_E) ## this is the node hearing the tool_pose_position and telling the th_Emission to send the msg to the Rpi
     except rospy.ROSInterruptException or KeyboardInterrupt:
         connexion.close()
         print("Close the socket communication")
         pass
+    
+if __name__ == '__main__':
+    x1 = -0.1
+    y1 = -0.5
+    z1 = 0.319 -0.03 # -0.03 is the argument we gave to the pick and place to deal with
+    x2 = 0.05
+    y2 = -0.5
+    z2 = 0.319 -0.03 
+    host = '10.4.11.117'
+    port = 5003
+    name_file = write_csv.create_csv_file(write_csv.header, write_csv.name_file)
+    client_db = write_influxdb.write_into_db()
+    main(x1,y1,z1,x2,y2,z2,host,port)

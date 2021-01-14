@@ -19,9 +19,17 @@ import write_csv
 
 
 ''' Define the Class BtnPosition to work faster'''
-class Thread_BtnPosition(threading.Thread):
+class Thread_BtnPosition(threading.Thread):    
+    """! The Thread_BtnPosition class inherited from threading.Thread.
+    Defines the ROS driver to define the button area.
+    """    
+    
     def __init__(self,conn,name_Btn1,name_Btn2,x1,y1,z1,x2,y2,z2,client_db,name_file):
         threading.Thread.__init__(self)
+        """! The Thread_BtnPosition base class initializer as a thread .
+        @param name  The name of the sensor.
+        @return  An instance of the Sensor class initialized with the specified name.
+        """        
         self.connection = conn
         self.name_Btn1 = name_Btn1
         self.name_Btn2 = name_Btn2
@@ -50,6 +58,9 @@ class Thread_BtnPosition(threading.Thread):
         
 
     def run(self):
+        """! Retrieves the sensor's description.
+        @return  send the socket message when the robot end effector enters or leave a button area.
+        """
         while 1:
             if self.bool_position_Btn1 == self.bool_position_Btn1_sendMsg == True:
                 time_relativ_use.time_t1 = datetime.datetime.utcnow() # defining the relativ time t1

@@ -4008,3 +4008,9 @@ datetime.utcnow,Btn1_Pressed,Btn2_Pressed,EndEffectoreIn_Btn1_Area,EndEffectorIn
 2021-01-14 14:43:12.583635,False,True,False,True
 2021-01-14 14:43:16.940091,True,False,True,False
 2021-01-14 14:43:21.303791,False,True,False,True
+datetime.utcnow,Btn1_Pressed,Btn2_Pressed,EndEffectoreIn_Btn1_Area,EndEffectorIn_Btn2_Area
+2021-01-14 15:03:19.601605,True,False,True,False
+2021-01-14 15:03:23.966514,False,True,False,True
+datetime.utcnow,Btn1_Pressed,Btn2_Pressed,EndEffectoreIn_Btn1_Area,EndEffectorIn_Btn2_Area
+2021-01-14 15:34:07.279349,True,False,True,False
+2021-01-14 15:34:11.643158,False,True,False,True
