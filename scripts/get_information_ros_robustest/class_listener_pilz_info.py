@@ -33,7 +33,7 @@ class PilzInformer(InfluxDBClient):
         self.encoded_state=diagnostics.desired.positions
         self.error_state=diagnostics.error.positions
         self.write_into_db(self.client)
-        self.data = self.convert_info_into_json(self.client)
+        self.data = self.write_info_json_into_db(self.client)
         self.print_all_info()
 
     
@@ -49,7 +49,7 @@ class PilzInformer(InfluxDBClient):
         client.switch_database('Pilz_Information_Test')
         
         
-    def convert_info_into_json(self,client):
+    def write_info_json_into_db(self,client):
         json_body = [
             {
                 "measurement": "Pilz_Informations",
@@ -66,16 +66,9 @@ class PilzInformer(InfluxDBClient):
             }
         ]
         client.write_points(json_body)
-#    
-
-
-
+    
     def clock_callback(self, clock):
         print clock
-
-
-def write_info_influxdb(client,data):
-    pass
 
 
 if __name__ == '__main__':
