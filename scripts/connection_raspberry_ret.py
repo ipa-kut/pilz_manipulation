@@ -31,6 +31,11 @@ def run(connexion,client_db,writer):
         print("done") # in order to know that we have well shutdown the thread when we end the test
     tool_pose_listener_socket_message.run(th_E) ## this is the node hearing the tool_pose_position and telling the th_Emission to send the msg to the Rpi
     
+''' Add this part and use it when the ret is not running
+I am afraid that this thread that I setup as daemon could be mutex by the other thread, and get bad information'''
+def get_information_pilz(pilz_object_class_pilz_info,client_db, writer):
+    pass
+''' '''
 
 if __name__ == '__main__':
     try:
@@ -44,7 +49,7 @@ if __name__ == '__main__':
         z2 = 0.319 -0.03 
         print("lancement")
         host = '10.4.11.117'
-        port = 5007
+        port = 5001
             #Establishment of the connection :
         connexion = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
