@@ -49,7 +49,7 @@ if __name__ == '__main__':
         z2 = 0.319 -0.03 
         print("lancement")
         host = '10.4.11.117'
-        port = 5001
+        port = 5003
             #Establishment of the connection :
         connexion = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:

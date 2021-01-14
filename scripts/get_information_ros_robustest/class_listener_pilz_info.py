@@ -26,7 +26,6 @@ class PilzInformer(InfluxDBClient):
         self.temperature=""
         self.voltage=""
         self.client = InfluxDBClient(host="localhost",port="8086")
-        self.data= []
 
     def diagnostics_callback(self, diagnostics):
         self.actual_joint_state= diagnostics.actual.positions
@@ -34,14 +33,12 @@ class PilzInformer(InfluxDBClient):
         self.error_state=diagnostics.error.positions
         self.write_into_db(self.client)
         self.data = self.write_info_json_into_db(self.client)
-        self.print_all_info()
+#        self.print_all_info()
 
     
     def print_all_info(self):
         print self.actual_joint_state
         print self.encoded_state
-        print self.error_state
-        print "Data a ecrire = ", self.data
 
     def write_into_db(self,client):
         client.create_database('Pilz_Information_Test') ## Always writing in the same DB for now
