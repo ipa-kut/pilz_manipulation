@@ -4,6 +4,6 @@
   
 <include file="$(find pilz_manipulation)/launch/tool_pose.launch" >
   </include>
- <node name="myFirstApplication" pkg ="pilz_manipulation" type="myFirstApplication.py" output="screen"/>
+ <node name="myFirstApplication" pkg ="pilz_manipulation" type="ret_native.py" output="screen"/>
 
 </launch>

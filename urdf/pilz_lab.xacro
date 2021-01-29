@@ -1,0 +1,133 @@
+<?xml version="1.0" ?>
+
+<robot name="prbt" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Using pi and defining alpha: the orientation of the prbt_accroche-->
+  <xacro:property name="alpha" value="${90/180*pi}" />
+
+  <!-- macro definition of pilz lwa -->
+  <xacro:include filename="$(find prbt_support)/urdf/prbt_macro.xacro" />
+
+  <!-- coloring from the stl file -->
+  <material name="yellow">
+    <color rgba="1 1 0 1"/>
+   </material>
+
+  <!-- coloring from the table -->
+  <material name="grey">
+    <color rgba="0.75 0.75 0.75 1"/>
+  </material>
+
+  <!-- coloring the added part to the robot -->
+  <material name="blue">
+    <color rgba="0 0 0.8 2"/>
+  </material>
+
+    <xacro:property name="workspace_x" value="0.6"/>
+    <xacro:property name="workspace_y" value="1.2"/>
+    <xacro:property name="workspace_z" value="1.15"/>
+    <xacro:property name="wall_width" value="0.05"/>
+    <xacro:property name="wall_height_visual" value="0.15"/>
+
+  <!-- instantiate the robot -->
+  <xacro:prbt prefix="prbt_"/>
+
+    <link name="table">
+        <collision><!-- rechts -->
+          <origin rpy="0 0 0" xyz="0 ${0.28+wall_width/2} ${workspace_z/2.}"/>
+          <geometry>
+             <box size="${workspace_x} ${wall_width} ${workspace_z}"/>
+          </geometry>
+        </collision>
+        <visual>
+          <origin rpy="0 0 0" xyz="0 ${0.28+wall_width/2.} ${wall_height_visual/2}"/>
+          <geometry>
+             <box size="${workspace_x} ${wall_width} ${wall_height_visual}"/>
+          </geometry>
+          <material name="grey"/>
+        </visual>
+
+        <collision><!-- vorne -->
+          <origin rpy="0 0 0" xyz="-${workspace_x/2} -0.28 ${workspace_z/2.}"/>
+          <geometry>
+             <box size="${wall_width} ${workspace_y} ${workspace_z}"/>
+          </geometry>
+        </collision>
+        <visual>
+          <origin rpy="0 0 0" xyz="-${workspace_x/2} -0.28 ${wall_height_visual/2}"/>
+          <geometry>
+             <box size="${wall_width} ${workspace_y} ${wall_height_visual}"/>
+          </geometry>
+          <material name="grey"/>
+        </visual>
+
+        <collision><!--hinten-->
+          <origin rpy="0 0 0" xyz="${workspace_x/2.} -0.28 ${workspace_z/2.}"/>
+          <geometry>
+             <box size="${wall_width} ${workspace_y} ${workspace_z}"/>
+          </geometry>
+        </collision>
+        <visual>
+          <origin rpy="0 0 0" xyz="${workspace_x/2} -0.28 ${wall_height_visual/2}"/>
+          <geometry>
+             <box size="${wall_width} ${workspace_y} ${wall_height_visual}"/>
+          </geometry>
+          <material name="grey"/>
+        </visual>
+
+        <collision><!--links-->
+          <origin rpy="0 0 0" xyz="0 ${-0.92+wall_width/2} ${workspace_z/2.}"/>
+          <geometry>
+             <box size="${workspace_x} ${wall_width} ${workspace_z}"/>
+          </geometry>
+        </collision>
+        <visual>
+          <origin rpy="0 0 0" xyz="0 ${-0.92+wall_width/2} ${wall_height_visual/2}"/>
+          <geometry>
+             <box size="${workspace_x} ${wall_width} ${wall_height_visual}"/>
+          </geometry>
+          <material name="grey"/>
+        </visual>
+
+        <collision><!-- bottom -->
+          <origin rpy="0 0 0" xyz="0 -0.32 -0.05"/>
+          <geometry>
+             <box size="${workspace_x} ${workspace_y} ${wall_width}"/>
+          </geometry>
+        </collision>
+        <visual>
+          <origin rpy="0 0 0" xyz="0 -0.32 0"/>
+          <geometry>
+             <box size="${workspace_x} ${workspace_y} ${wall_width}"/>
+          </geometry>
+          <material name="grey"/>
+        </visual>
+
+        <collision><!-- top -->
+          <origin rpy="0 0 0" xyz="0 -0.32 ${workspace_z}"/>
+          <geometry>
+             <box size="${workspace_x} ${workspace_y} ${wall_width}"/>
+          </geometry>
+        </collision>
+    </link>
+
+
+<!--add end effector tcp-->
+<link name="prbt_tcp"/>
+
+
+
+<!-- connect the added tcp and the flange with a joint -->
+  <joint name="prbt_fixed_joint_tcp" type="fixed">
+   <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="prbt_flange"/>
+    <child link="prbt_tcp"/>
+  </joint>
+
+  <joint name="table_prbt_joint" type="fixed">
+    <parent link="table"/>
+    <child link="prbt_base_link"/>
+  </joint>
+
+  
+</robot>

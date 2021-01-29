@@ -5,7 +5,7 @@
 	
 	<!--send to param server -->
 	<param name="robot_description"
-	  command="$(find xacro)/xacro '$(find pilz_manipulation)/urdf/my_first_application.xaccro'"/>
+	  command="$(find xacro)/xacro '$(find pilz_manipulation)/urdf/pilz_lab.xacro'"/>
 
 
 	<include file="$(find prbt_moveit_config)/launch/moveit_planning_execution.launch">
@@ -15,4 +15,5 @@
           <arg name="pipeline" value="pilz_command_planner"/>
 	</include>
 
+ 	<node name="tool_pose_publisher" pkg ="pilz_manipulation" type="tool_pose_publisher.py" 		output="screen"/>
 </launch>
