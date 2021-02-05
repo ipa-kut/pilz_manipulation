@@ -41,28 +41,57 @@ class PilzInformer(InfluxDBClient):
         print self.encoded_state
 
     def write_into_db(self,client):
-        client.create_database('Pilz_Information_Test') ## Always writing in the same DB for now
-        print(client.get_list_database())   ## This will be useful to chose the name of the database for each test
-        client.switch_database('Pilz_Information_Test')
+        client.create_database('Pilz_Information_Test_ToExport_v1') ## Always writing in the same DB for now
+#        print(client.get_list_database())   ## This will be useful to chose the name of the database for each test
+        client.switch_database('Pilz_Information_Test_ToExport_v1')
         
         
     def write_info_json_into_db(self,client):
-        json_body = [
+        json_body_actual = [
             {
-                "measurement": "Pilz_Informations",
+                "measurement": "actual_joint_state",
                 "tags": {
-                    "requestName": "Joint_State_Informations",
+                    "requestName": "actual_joint_state",
                     "requestType": "GET"
                 },
                 "time":datetime.datetime.utcnow(),
                  "fields": {
-                    "actual_joint_state": str(self.actual_joint_state),
-                    "encoded_state": str(self.encoded_state),
+                    "actual_joint_state": str(self.actual_joint_state)                            }
+            }
+        ]
+        json_body_encoded = [
+            {
+                "measurement": "encoded_state",
+                "tags": {
+                    "requestName": "encoded_state",
+                    "requestType": "GET"
+                },
+                "time":datetime.datetime.utcnow(),
+                 "fields": {
+                    "actual_joint_state": str(self.encoded_state)
+                            }
+            }
+        ]
+    
+        json_body_error = [
+            {
+                "measurement": "error_state",
+                "tags": {
+                    "requestName": "actual_joint_state",
+                    "requestType": "GET"
+                },
+                "time":datetime.datetime.utcnow(),
+                 "fields": {
                     "error_state": str(self.error_state)
                             }
             }
         ]
-        client.write_points(json_body)
+    
+    
+    
+        client.write_points(json_body_actual)
+        client.write_points(json_body_encoded)
+        client.write_points(json_body_error)
     
     def clock_callback(self, clock):
         print clock
