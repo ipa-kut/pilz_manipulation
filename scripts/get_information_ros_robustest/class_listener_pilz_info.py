@@ -19,16 +19,18 @@ class PilzInformer(InfluxDBClient):
         #self.clock_sub = rospy.Subscriber('clock', Clock, self.clock_callback)
         #self.temperature = '''rospy.Subscriber('temperature', Temperature, self.temperature_callback)''' # find the topic for temperature
         self.time_info = ""
-        self.actual_joint_state= ()
+        self.actual_state= ()
         self.encoded_state=()
         self.error_state=()
         self.cartesian_position_end_effector=""
         self.temperature=""
         self.voltage=""
-        self.client = InfluxDBClient(host="localhost",port="8086")
+        self.client = InfluxDBClient(host="localhost",port="8086",username='ret', password='asdf', database='demo')
+        ## Get the pilz information about the name of the joint
+
 
     def diagnostics_callback(self, diagnostics):
-        self.actual_joint_state= diagnostics.actual.positions
+        self.actual_state= diagnostics.actual.positions
         self.encoded_state=diagnostics.desired.positions
         self.error_state=diagnostics.error.positions
         self.write_into_db(self.client)
@@ -37,28 +39,36 @@ class PilzInformer(InfluxDBClient):
 
     
     def print_all_info(self):
-        print self.actual_joint_state
+        print self.actual_state
         print self.encoded_state
-
+        print self.error_state
     def write_into_db(self,client):
-        client.create_database('Pilz_Information_Test_ToExport_v1') ## Always writing in the same DB for now
+        client.create_database('demo') ## Always writing in the same DB for now
 #        print(client.get_list_database())   ## This will be useful to chose the name of the database for each test
-        client.switch_database('Pilz_Information_Test_ToExport_v1')
+        client.switch_database('demo')
         
         
     def write_info_json_into_db(self,client):
+        
         json_body_actual = [
             {
-                "measurement": "actual_joint_state",
+                "measurement": "actual_state",
                 "tags": {
-                    "requestName": "actual_joint_state",
+                    "requestName": "actual_state",
                     "requestType": "GET"
                 },
                 "time":datetime.datetime.utcnow(),
                  "fields": {
-                    "actual_joint_state": str(self.actual_joint_state)                            }
+                    "prbt_joint1": self.actual_state[0],
+                    "prbt_joint2": self.actual_state[1],
+                    "prbt_joint3": self.actual_state[2],
+                    "prbt_joint4": self.actual_state[3],
+                    "prbt_joint5": self.actual_state[4],
+                    "prbt_joint6": self.actual_state[5]
+                            }
             }
         ]
+
         json_body_encoded = [
             {
                 "measurement": "encoded_state",
@@ -68,7 +78,12 @@ class PilzInformer(InfluxDBClient):
                 },
                 "time":datetime.datetime.utcnow(),
                  "fields": {
-                    "actual_joint_state": str(self.encoded_state)
+                    "prbt_joint1": self.encoded_state[0],
+                    "prbt_joint2": self.encoded_state[1],
+                    "prbt_joint3": self.encoded_state[2],
+                    "prbt_joint4": self.encoded_state[3],
+                    "prbt_joint5": self.encoded_state[4],
+                    "prbt_joint6": self.encoded_state[5]
                             }
             }
         ]
@@ -77,18 +92,21 @@ class PilzInformer(InfluxDBClient):
             {
                 "measurement": "error_state",
                 "tags": {
-                    "requestName": "actual_joint_state",
+                    "requestName": "error_state",
                     "requestType": "GET"
                 },
                 "time":datetime.datetime.utcnow(),
                  "fields": {
-                    "error_state": str(self.error_state)
+                    "prbt_joint1": self.error_state [0],
+                    "prbt_joint2": self.error_state [1],
+                    "prbt_joint3": self.error_state [2],
+                    "prbt_joint4": self.error_state [3],
+                    "prbt_joint5": self.error_state [4],
+                    "prbt_joint6": self.error_state [5]
                             }
             }
         ]
-    
-    
-    
+   
         client.write_points(json_body_actual)
         client.write_points(json_body_encoded)
         client.write_points(json_body_error)
