@@ -6,6 +6,22 @@ Created on Mon Feb  1 08:51:44 2021
 @author: ret
 """
 
+# @file Btn_Pressing_Detection_Test_Button_Masher_Application.py
+#
+# @brief Defines the test of the Button Pressing Detection using the Button Masher Application program.
+#
+# @section Btn_Pressing_Detection_Test_Button_Masher_Application Description
+# Defines the test of the Button Pressing Detection using the Button Masher Application program.
+# Test the efficiency of the Button Pressing Detection
+# Using the same program than the Button Masher Application
+
+#
+# @section libraries_Button_Masher_Application Libraries/Modules
+# - geometry_msgs.msg
+# - pilz_robot_programming
+# - math
+# - rospy
+
 from geometry_msgs.msg import Point
 from pilz_robot_programming import *
 import math

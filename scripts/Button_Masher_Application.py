@@ -5,6 +5,22 @@ Created on Th Jan 28 11:55:10 2021
 
 @author: alban
 """
+# @mainpage Doxygen Native Button Masher Application
+# @file Button_Masher_Application.py
+#
+# @section Button_Masher_Application Description
+# Define the global variable that the RET is using on the computer:
+# - the required API version
+# - the robot velocity
+# - the name of the node
+
+#
+# @section libraries_Button_Masher_Application Libraries/Modules
+# - geometry_msgs.msg
+# - pilz_robot_programming
+# - math
+# - rospy
+
 from geometry_msgs.msg import Point
 from pilz_robot_programming import *
 import math
@@ -16,12 +32,9 @@ __ROBOT_VELOCITY__ = 0.5 #velocity of the robot
 
 #main program
 def start_program(i):
-    """ To get the postion or to use a cartesian goal to move   
-    print(r.get_current_pose())
-    This is the equivalent of using the tf_node : rosrun tf tf_echo /prbt_base_link /prbt_tcp
-    cartesian_goal=Pose(position=Point(0.020, -0.462, 0.396), orientation=Quaternion(0.772, 0.000, 0.000, 0.635))
-    # Get the joint states
-    print(r.get_current_joint_states())
+    """! The Button Masher Application base function.
+    @parameter i is the number of sequence the robot is doing before stopping
+    Defines the sequence of the RET by going two ready position and then have a sequence of linear movement.
     """
     pick_pose= Pose(position=Point(-0.1, -0.45, 0.175), orientation=Quaternion(1, 0, 0, 0))
     place_pose = Pose(position=Point(0.05, -0.45, 0.175), orientation=Quaternion(1, 0, 0, 0))
@@ -54,6 +67,9 @@ def start_program(i):
 
 
 def pick_and_place():    
+    """! The Button Masher Application Pick and Place function.
+    Changed by a sequence in the function for it to be reminded
+    """
     r.move(Lin(goal=Pose(position=Point(0, 0, 0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
     rospy.sleep(0.2)    # pick or Place the PNOZ (close or open the gripper)
     r.move(Lin(goal=Pose(position=Point(0, 0, -0.03)), reference_frame="prbt_tcp", vel_scale=0.1))

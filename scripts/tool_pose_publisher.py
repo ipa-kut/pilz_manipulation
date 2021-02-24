@@ -6,6 +6,21 @@ Created on Fri Jan 29 16:59:12 2021
 @author: ret
 """
 
+# @file tool_pose_publisher.py
+#
+#
+# @section tool_pose_publisher Description
+# Define the global variable that the RET is using on the computer:
+# - the end effector cartesian coordinates published in a topic
+# - the name of the node publisher
+
+#
+# @section libraries_tool_pose_publisher Libraries/Modules
+# - rospy for the use of ROS with python
+# - tf
+# - geometry_msgs.msg
+
+
 import rospy
 import tf
 import geometry_msgs.msg
