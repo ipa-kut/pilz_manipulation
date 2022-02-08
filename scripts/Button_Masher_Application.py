@@ -22,8 +22,8 @@ import time
 
 __REQUIRED_API_VERSION__ = "1" # API version
 __ROBOT_VELOCITY__ = 0.5 # Velocity of the robot
-__SOCKET_HOST__ = '10.4.11.117'
-__SOCKET_PORT__ = 5001
+__SOCKET_HOST__ = '169.254.60.100'
+__SOCKET_PORT__ = 65432
 
 #main program
 def start_program(loops, robot, connection):
@@ -56,7 +56,7 @@ def press_and_log(button_name, robot, connection):
     """
     robot.move(Lin(goal=Pose(position=Point(0, 0, 0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
     rospy.sleep(0.2)
-    connection.send(time.time_ns() + ";" + button_name)
+    connection.send(str(time.time()) + ";" + button_name)
     robot.move(Lin(goal=Pose(position=Point(0, 0, -0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
     rospy.sleep(0.2)
 
