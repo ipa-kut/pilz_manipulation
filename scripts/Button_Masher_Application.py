@@ -3,82 +3,78 @@
 """
 Created on Th Jan 28 11:55:10 2021
 
-@author: alban
+@author: alban, kut
 """
 # @mainpage Doxygen Native Button Masher Application
 # @file Button_Masher_Application.py
 #
 # @section Button_Masher_Application Description
-# Define the global variable that the RET is using on the computer:
-# - the required API version
-# - the robot velocity
-# - the name of the node
-
-#
-# @section libraries_Button_Masher_Application Libraries/Modules
-# - geometry_msgs.msg
-# - pilz_robot_programming
-# - math
-# - rospy
+# Press Button1 and send a socket message saying it is pressed
+# Press Button2 and send a socket message saying it is pressed
+# Repeat
 
 from geometry_msgs.msg import Point
 from pilz_robot_programming import *
 import math
 import rospy
-
+import socket, sys
+import time
 
 __REQUIRED_API_VERSION__ = "1" # API version
-__ROBOT_VELOCITY__ = 0.5 #velocity of the robot
+__ROBOT_VELOCITY__ = 0.5 # Velocity of the robot
+__SOCKET_HOST__ = '10.4.11.117'
+__SOCKET_PORT__ = 5001
 
 #main program
-def start_program(i):
+def start_program(loops, robot, connection):
     """! The Button Masher Application base function.
-    @parameter i is the number of sequence the robot is doing before stopping
-    Defines the sequence of the RET by going two ready position and then have a sequence of linear movement.
+    @parameter loops is the number of sequence the robot is doing before stopping
+    @parameter robot is the pilz robot API object
+    @parameter connection is the socket connection
+    Defines the sequence of the RET by going two ready position for each button, press it, and log the event
     """
-    pick_pose= Pose(position=Point(-0.1, -0.45, 0.175), orientation=Quaternion(1, 0, 0, 0))
-    place_pose = Pose(position=Point(0.05, -0.45, 0.175), orientation=Quaternion(1, 0, 0, 0))
+    button1_pose= Pose(position=Point(-0.1, -0.45, 0.175), orientation=Quaternion(1, 0, 0, 0))
+    button2_pose = Pose(position=Point(0.05, -0.45, 0.175), orientation=Quaternion(1, 0, 0, 0))
     #define a sequence instead of the pick and place application: With it, the robot remember that he already made the sequence
-    blend_sequence = Sequence()
-    blend_sequence.append(Lin(goal=Pose(position=Point(0, 0, 0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
-    blend_sequence.append(Lin(goal=Pose(position=Point(0, 0, -0.015)), reference_frame="prbt_tcp", vel_scale=0.1))
-    while i < 15000:
-        r.move(Ptp(goal=pick_pose, vel_scale = __ROBOT_VELOCITY__, relative=False))
+    # blend_sequence = Sequence()
+    # blend_sequence.append(Lin(goal=Pose(position=Point(0, 0, 0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
+    # blend_sequence.append(Lin(goal=Pose(position=Point(0, 0, -0.015)), reference_frame="prbt_tcp", vel_scale=0.1))
+
+    i = 0
+    while i <= loops:
+        robot.move(Ptp(goal=button1_pose, vel_scale = __ROBOT_VELOCITY__, relative=False))
         rospy.sleep(0.2)
-        r.move(blend_sequence)
-#        pick_and_place()
-#
-        r.move(Ptp(goal=place_pose, vel_scale = __ROBOT_VELOCITY__, relative=False))
+        press_and_log("button1", robot, connection)
+
+        robot.move(Ptp(goal=button2_pose, vel_scale = __ROBOT_VELOCITY__, relative=False))
         rospy.sleep(0.2)
-        r.move(blend_sequence)
-#        pick_and_place()
+        press_and_log("button2", robot, connection)
 
         i+=1
         rospy.loginfo("We finished sequence number : %s" %i)
-            
+    connection.close()
 
-#        rospy.loginfo("Move to intermediate_place_pose position") # log
-#        r.move(Ptp(goal=intermediate_place_pose, vel_scale = __ROBOT_VELOCITY__, relative=False))
-#        rospy.loginfo("Move to intermediate_place_pose_orientation position") # log
-#        r.move(Ptp(goal=intermediate_place_pose_orientation, vel_scale = __ROBOT_VELOCITY__, relative=False))
-#        pick_and_place()
-    
-    
-
-
-def pick_and_place():    
-    """! The Button Masher Application Pick and Place function.
-    Changed by a sequence in the function for it to be reminded
+def press_and_log(button_name, robot, connection):
+    """! The press_and_log function.
+    Go down to press the button, send a socket message logging the action, and go back up
+    @param Name of button that was pressed
     """
-    r.move(Lin(goal=Pose(position=Point(0, 0, 0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
-    rospy.sleep(0.2)    # pick or Place the PNOZ (close or open the gripper)
-    r.move(Lin(goal=Pose(position=Point(0, 0, -0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
-    rospy.sleep(0.2)    # pick or Place the PNOZ (close or open the gripper)
+    robot.move(Lin(goal=Pose(position=Point(0, 0, 0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
+    rospy.sleep(0.2)
+    connection.send(time.time_ns() + ";" + button_name)
+    robot.move(Lin(goal=Pose(position=Point(0, 0, -0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
+    rospy.sleep(0.2)
 
-    
-    
 if __name__ == "__main__":
     rospy.init_node('robot_program_node')
     #initialisation
     r = Robot(__REQUIRED_API_VERSION__)
-    start_program(i=0)
+    connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        connection.connect((__SOCKET_HOST__, __SOCKET_PORT__))
+    except socket.error:
+        print("Connection has failed.")
+        connection.close()
+        sys.exit()
+    print("Connection established with the servor.")
+    start_program(loops=15000,robot=r, connection=connection )

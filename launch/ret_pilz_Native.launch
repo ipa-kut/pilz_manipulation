@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-
-<launch>
-  
-<include file="$(find pilz_manipulation)/launch/tool_pose.launch" >
-  </include>
- <node name="ButtonMasherApplication" pkg ="pilz_manipulation" type="ret_native.py" output="screen"/>
-
-</launch>
