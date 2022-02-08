@@ -9,9 +9,9 @@
 	<include file="$(find prbt_moveit_config)/launch/moveit_planning_execution.launch">
 	  <arg name="load_robot_description" value="false"/>
 	  <arg name="sim" value="$(arg sim)"/>
-		<!-- We are not using the pilz_command planner:PTP yet : make sure you selected it in Rviz  -->
-		<arg name="pipeline" value="pilz_command_planner"/>
+	  <!-- We are not using the pilz_command planner:PTP yet : make sure you selected it in Rviz  -->
+	  <arg name="pipeline" value="pilz_command_planner"/>
 	</include>
 
- 	<node name="tool_pose_publisher" pkg ="pilz_manipulation" type="Button_Masher_Application.py" 				  output="screen"/>
+ 	<node name="button_masher" pkg ="pilz_manipulation" type="Button_Masher_Application.py" output="screen"/>
 </launch>

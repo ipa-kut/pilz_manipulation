@@ -35,11 +35,6 @@ def start_program(loops, robot, connection):
     """
     button1_pose= Pose(position=Point(-0.1, -0.45, 0.175), orientation=Quaternion(1, 0, 0, 0))
     button2_pose = Pose(position=Point(0.05, -0.45, 0.175), orientation=Quaternion(1, 0, 0, 0))
-    #define a sequence instead of the pick and place application: With it, the robot remember that he already made the sequence
-    # blend_sequence = Sequence()
-    # blend_sequence.append(Lin(goal=Pose(position=Point(0, 0, 0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
-    # blend_sequence.append(Lin(goal=Pose(position=Point(0, 0, -0.015)), reference_frame="prbt_tcp", vel_scale=0.1))
-
     i = 0
     while i <= loops:
         robot.move(Ptp(goal=button1_pose, vel_scale = __ROBOT_VELOCITY__, relative=False))
