@@ -56,7 +56,7 @@ def press_and_log(button_name, robot, connection):
     """
     robot.move(Lin(goal=Pose(position=Point(0, 0, 0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
     rospy.sleep(0.2)
-    connection.send("prbt; " + str(time.time()) + ";" + button_name)
+    connection.send("prbt;" + str(time.time()) + ";" + button_name)
     robot.move(Lin(goal=Pose(position=Point(0, 0, -0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
     rospy.sleep(0.2)
 
