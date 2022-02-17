@@ -22,7 +22,7 @@ import time
 
 __REQUIRED_API_VERSION__ = "1" # API version
 __ROBOT_VELOCITY__ = 0.5 # Velocity of the robot
-__SOCKET_HOST__ = '169.254.60.100'
+__SOCKET_HOST__ = '10.4.11.132'
 __SOCKET_PORT__ = 65432
 
 #main program
@@ -39,11 +39,11 @@ def start_program(loops, robot, connection):
     while i <= loops:
         robot.move(Ptp(goal=button1_pose, vel_scale = __ROBOT_VELOCITY__, relative=False))
         rospy.sleep(0.2)
-        press_and_log("button1", robot, connection)
+        press_and_log("1", robot, connection)
 
         robot.move(Ptp(goal=button2_pose, vel_scale = __ROBOT_VELOCITY__, relative=False))
         rospy.sleep(0.2)
-        press_and_log("button2", robot, connection)
+        press_and_log("2", robot, connection)
 
         i+=1
         rospy.loginfo("We finished sequence number : %s" %i)
@@ -56,7 +56,7 @@ def press_and_log(button_name, robot, connection):
     """
     robot.move(Lin(goal=Pose(position=Point(0, 0, 0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
     rospy.sleep(0.2)
-    connection.send(str(time.time()) + ";" + button_name)
+    connection.send("prbt; " + str(time.time()) + ";" + button_name)
     robot.move(Lin(goal=Pose(position=Point(0, 0, -0.03)), reference_frame="prbt_tcp", vel_scale=0.1))
     rospy.sleep(0.2)
 
